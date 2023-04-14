@@ -1,0 +1,245 @@
+openapi: 3.0.1
+info:
+  title: User API
+  description: API endpoints to communicate with user data
+  contact:
+    name: Nathaniel Cobbinah
+    url: https://shy-lime-dibbler-garb.cyclic.app/
+    email: fmg3ckali@gmail.com
+  license:
+    name: MIT
+    url: https://choosealicense.com/licenses/mit/
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /api/users:
+    summary: Endpoint used to create or list users in the system
+    description: Registers a new user or retrieves all users in the system
+    get:
+      tags:
+      - User
+      summary: Retrieve all user records from the system
+      description: List all current registered users in the system
+      operationId: list
+      responses:
+        "200":
+          description: Fetches all user records from the system
+          content:
+            application/json:
+              examples:
+                User Records retrieved successfully:
+                  value: |-
+                    [
+                        {
+                            "_id": "62f3670f0782e68d068b9463",
+                            "name": "John Smith",
+                            "email": "john@smith.info",
+                            "created": "2022-08-10T08:06:39.754Z"
+                        }
+                    ]
+        default:
+          description: Default error sample response
+      x-swagger-router-controller: User
+    post:
+      tags:
+      - User
+      summary: Creates a new user record into the system
+      description: Creates a new User registered account in  the system
+      operationId: create
+      requestBody:
+        description: A new order object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "201":
+          description: Creates a new user account in the system
+          content:
+            application/json:
+              examples:
+                User Account created successfully:
+                  value: "{ \n \"name\":\"John Smith\",\n \"email\":\"john@smith.info\"\
+                    ,\n}"
+        default:
+          description: Default error sample response
+      x-swagger-router-controller: User
+  /api/users/{userId}:
+    summary: "Endpoint used to retrieve a single userRecord, update userRecord or\
+      \ delete userRecord if user is loggedIn successfully"
+    description: A verified loggedIn user can only perform operations on this urlPath
+    get:
+      tags:
+      - User
+      summary: Retrieves user Information
+      description: "Retrieves a valid registered user in the system, who wants to\
+        \ view own records"
+      operationId: read
+      parameters:
+      - name: userId
+        in: path
+        description: The userId of the user.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Retrieved a loggedIn user information
+          content:
+            application/json:
+              examples:
+                User Information retrieved successfully:
+                  value: "{ \n \"name\":\"John Smith\",\n \"email\":\"john@smith.info\"\
+                    ,\n}"
+        default:
+          description: Default error sample response
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: User
+    put:
+      tags:
+      - User
+      summary: Update user record
+      description: Updates a verified user who is loggedIn and wants to edit his/her
+        records
+      operationId: update
+      parameters:
+      - name: userId
+        in: path
+        description: The userId of the user.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: A new order object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "200":
+          description: Updates a loggedIn user record
+          content:
+            application/json:
+              examples:
+                User Record updated Successfully:
+                  value: "{ \n \"name\":\"John Smith\",\n \"email\":\"john@smith.info\"\
+                    ,\n \"updated\": \"24232423242\",\n}"
+        default:
+          description: Default error sample response
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: User
+    delete:
+      tags:
+      - User
+      summary: Delete a user from the system
+      description: "Deletes a verified loggedIn user, who wants to delete account\
+        \ permanently from the system"
+      operationId: remove
+      parameters:
+      - name: userId
+        in: path
+        description: The userId of the user.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Removes a user account from the system
+          content:
+            application/json:
+              examples:
+                User Record deleted successfully:
+                  value: "{ \n \"name\":\"John Smith\",\n \"email\":\"john@smith.info\"\
+                    ,\n}"
+        default:
+          description: Default error sample response
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: User
+  /auth/signin:
+    summary: Login to userAccount
+    description: A registered User can login using this endpoint
+    post:
+      tags:
+      - User Authentication
+      summary: User Login entry into the system
+      description: Verifies user credentials and allow entry into the system
+      operationId: signin
+      requestBody:
+        description: A new order object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        "200":
+          description: logs in a verified user into the system
+          content:
+            application/json:
+              examples:
+                Login successful:
+                  value: "{ \n \"id\": \"xxxxxxxxxx\",\n \"name\":\"John Smith\",\n\
+                    \ \"email\":\"john@smith.info\",\n}"
+        default:
+          description: Default error sample response
+      x-swagger-router-controller: UserAuthentication
+  /auth/signout:
+    summary: Endpoint to logout user from the system
+    description: "Clears userToken, thus logging out user from the system"
+    get:
+      tags:
+      - User Authentication
+      summary: Logout user from the system
+      description: "Clear validToken, and disable access to userInfo unless user is\
+        \ loggedIn again"
+      operationId: signout
+      responses:
+        "200":
+          description: Clears userToken from the system
+          content:
+            application/json:
+              examples:
+                User signed out successfully:
+                  value: signed out
+        default:
+          description: Default error sample response
+      x-swagger-router-controller: UserAuthentication
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      xml:
+        name: User
+    UserLogin:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      xml:
+        name: UserLogin
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
