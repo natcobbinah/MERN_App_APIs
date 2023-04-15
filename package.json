@@ -19,6 +19,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-jwt": "^8.4.1",
+    "formidable": "^2.1.1",
     "helmet": "^6.1.5",
     "js-yaml": "^3.3.0",
     "jsonwebtoken": "^9.0.0",
