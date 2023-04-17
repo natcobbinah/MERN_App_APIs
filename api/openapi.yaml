@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: User API
+  title: Social Media App  API
   version: 1.0.0
   description: API endpoints to communicate with user data
   contact:
@@ -224,6 +224,85 @@ paths:
           description: Default error sample response
       tags:
         - User Profile Photo
+  /api/users/follow:
+    put:
+      summary: Follow other users
+      description: Follow another user
+      operationId: addFollowing
+      requestBody:
+        description: Follow Other Users Request object 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowUser'
+      responses:
+        '200':
+          description: Following User successful
+        default:
+          description: Default error sample response
+      tags:
+        - Follow and Unfollow other Users
+      security:
+        - bearerAuth: []
+  /api/users/unfollow: 
+    put:
+      summary: Unfollow other users
+      description: Unfollow another user
+      operationId: removeFollowing
+      requestBody:
+        description: Unfollow Other Users Request object 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnfollowUser'
+      responses:
+        '200':
+          description: Following User successful
+        default:
+          description: Default error sample response
+      tags:
+        - Follow and Unfollow other Users
+      security:
+        - bearerAuth: []
+  /api/users/findPeople/{userId}: 
+    get:
+      summary: 'Retrieves list of individuals not in user following List'
+      description: >-
+        Displays a list of individuals available in the system for the user to follow
+      operationId: findPeople
+      parameters:
+        - name: userId
+          in: path
+          description: The userId of the user.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Available users to follow  retrieved successfully:
+                  value: |-
+                    [
+                       { 
+                       "name":"John Smith",
+                       },
+                       { 
+                       "name":"John Doe",
+                       },
+                    ]
+          description: Retrieved list of other users to follow
+        default:
+          description: Default error sample response
+      tags:
+        - Follow and Unfollow other Users
+      security:
+        - bearerAuth: []
   /auth/signin:
     summary: Login to userAccount
     description: A registered User can login using this endpoint
@@ -314,6 +393,24 @@ components:
           format: binary
       xml:
         name: UserUpdate
+    FollowUser:
+      type: object
+      properties:
+        actualUserId:
+          type: string
+        followId:
+          type: string
+      xml:
+        name: FollowUser
+    UnfollowUser:
+      type: object
+      properties:
+        actualUserId:
+          type: string
+        unfollowId:
+          type: string
+      xml:
+        name: UnfollowUser    
   securitySchemes:
     bearerAuth:
       type: http

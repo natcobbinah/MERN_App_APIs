@@ -36,14 +36,26 @@ const UserSchema = new Schema({
         required: "Password is required"
     },
     salt: String,
-    about:{
-        type:String,
+    about: {
+        type: String,
         trim: true
     },
-    photo:{
+    photo: {
         data: Buffer,
         contentType: String,
-    }
+    },
+    following: [
+        {
+            type: mongoose.ObjectId,
+            ref: 'Users'
+        }
+    ],
+    followers: [
+        {
+            type: mongoose.ObjectId,
+            ref: 'Users'
+        }
+    ]
 })
 
 UserSchema.virtual('password')
@@ -67,23 +79,23 @@ UserSchema.methods = {
                 .createHmac('sha1', this.salt)
                 .update(password)
                 .digest('hex')
-        }catch(err){
+        } catch (err) {
             return 'Encrypting password error'
         }
     },
-    makeSalt: function(){
+    makeSalt: function () {
         return Math.round((new Date().valueOf() * Math.random())) + ''
     }
 }
 
-UserSchema.path('hashed_password').validate(function(v){
-    if(this._password && this._password.length < 6){
+UserSchema.path('hashed_password').validate(function (v) {
+    if (this._password && this._password.length < 6) {
         this.invalidate('password', 'Password must be at least 6 characters.')
     }
-    if(this.isNew && !this._password){
-        this.invalidate('password','Password is required for account')
+    if (this.isNew && !this._password) {
+        this.invalidate('password', 'Password is required for account')
     }
-},null)
+}, null)
 
 export default mongoose.model('Users', UserSchema)
 
