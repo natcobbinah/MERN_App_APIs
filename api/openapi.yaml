@@ -230,7 +230,7 @@ paths:
       description: Follow another user
       operationId: addFollowing
       requestBody:
-        description: Follow Other Users Request object 
+        description: Follow Other Users Request object
         required: true
         content:
           application/json:
@@ -245,13 +245,13 @@ paths:
         - Follow and Unfollow other Users
       security:
         - bearerAuth: []
-  /api/users/unfollow: 
+  /api/users/unfollow:
     put:
       summary: Unfollow other users
       description: Unfollow another user
       operationId: removeFollowing
       requestBody:
-        description: Unfollow Other Users Request object 
+        description: Unfollow Other Users Request object
         required: true
         content:
           application/json:
@@ -266,11 +266,12 @@ paths:
         - Follow and Unfollow other Users
       security:
         - bearerAuth: []
-  /api/users/findPeople/{userId}: 
+  /api/users/findPeople/{userId}:
     get:
-      summary: 'Retrieves list of individuals not in user following List'
+      summary: Retrieves list of individuals not in user following List
       description: >-
-        Displays a list of individuals available in the system for the user to follow
+        Displays a list of individuals available in the system for the user to
+        follow
       operationId: findPeople
       parameters:
         - name: userId
@@ -301,6 +302,283 @@ paths:
           description: Default error sample response
       tags:
         - Follow and Unfollow other Users
+      security:
+        - bearerAuth: []
+  /api/posts/feed/{userId}:
+    get:
+      summary: >-
+        Newsfeed list aggregated from users followed by user and user posts
+        themselves
+      description: >-
+        each user will see posts that have been shared by people they follow,
+        along with posts that they themselves share, all aggregated in a
+        Newsfeed list
+      operationId: listNewsFeed
+      parameters:
+        - name: userId
+          in: path
+          description: The userId of the user.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                list of posts retrieved successfully:
+                  value: |-
+                    postedBy{ 
+                       "id":"agh862fdjl2ukdad"
+                       "name":"John Smith",
+                       },
+                    comments[
+                      postedBy:{
+                          "id":"hkshwsvwywjsfsf"
+                          "name":"Richard Doe",
+                      },
+                      postedBy:{
+                          "id":"kjhrddfse46343"
+                          "name":"Ivan Tembliq",
+                      },
+                    ]
+          description: Retrieved list of posts
+        default:
+          description: Default error sample response
+      tags:
+        - Posts
+      security:
+        - bearerAuth: []
+  /api/posts/by/{userId}:
+    get:
+      summary: Retrieving newsfeed posts for a specific user
+      description: ''
+      operationId: listByUser
+      parameters:
+        - name: userId
+          in: path
+          description: The userId of the user.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                list of posts retrieved successfully:
+                  value: |-
+                    postedBy{ 
+                       "id":"agh862fdjl2ukdad"
+                       "name":"John Smith",
+                       },
+                    comments[
+                      postedBy:{
+                          "id":"hkshwsvwywjsfsf"
+                          "name":"Richard Doe",
+                      },
+                      postedBy:{
+                          "id":"kjhrddfse46343"
+                          "name":"Ivan Tembliq",
+                      },
+                    ]
+          description: Retrieved list of posts by user
+        default:
+          description: Default error sample response
+      tags:
+        - Posts
+      security:
+        - bearerAuth: []
+  /api/posts/new/{userId}:
+    post:
+      summary: 'Create a post '
+      description: >-
+        Allows a signed-in user to post a message and optionally add an image to
+        the post
+      operationId: createPost
+      parameters:
+        - name: userId
+          in: path
+          description: The userId of the user.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        description: A new post object
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserPost'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                User Post saved Successfully:
+                  value: |-
+                    { 
+                     "name":"John Smith",
+                     "email":"john@smith.info",
+                     "updated": "24232423242",
+                    }
+          description: Creates a new post record by user
+        default:
+          description: Default error sample response
+      tags:
+        - Posts
+      security:
+        - bearerAuth: []
+  /api/posts/photo/{postId}:
+    get:
+      summary: Returns the photo associated with a specific post
+      description: ''
+      operationId: postPhoto
+      parameters:
+        - name: postId
+          in: path
+          description: The postId of the post.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Image file for post
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        default:
+          description: Default error sample response
+      tags:
+        - Posts
+  /api/posts/{postId}:
+    delete:
+      summary: Delete post  created by user
+      description: >-
+        This endpoint checks for authorization before deleting the post by
+        ensuring the authenticated user and postedBy user are the same users.
+      operationId: removePost
+      parameters:
+        - name: postId
+          in: path
+          description: The postId of the post.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Post Record deleted successfully:
+                  value: |-
+                    { 
+                     "text":"John Smith",
+                     "photo":"john@smith.info",
+                     "postedBy":"ObjectId("sgswt5gsdgwe978w3d"),
+                     "created":"18-04-2023",
+                    }
+          description: Removes a post by user  from the system
+        default:
+          description: Default error sample response
+      tags:
+        - Posts
+      security:
+        - bearerAuth: []
+  /api/posts/like:
+    put:
+      summary: Allows the user to like a post
+      description: ''
+      operationId: likePost
+      requestBody:
+        description: like user post object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Like_Unlike_Post'
+        required: true
+      responses:
+        '200':
+          description: Liked user post successfully
+        default:
+          description: Default error sample response
+      tags:
+        - Like/Unlike Posts
+      security:
+        - bearerAuth: []
+  /api/posts/unlike:
+    put:
+      summary: Allows the user to unlike a post
+      description: ''
+      operationId: unlikePost
+      requestBody:
+        description: unlike user post object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Like_Unlike_Post'
+        required: true
+      responses:
+        '200':
+          description: Unliked user post successfully
+        default:
+          description: Default error sample response
+      tags:
+        - Like/Unlike Posts
+      security:
+        - bearerAuth: []
+  /api/posts/comment:
+    put:
+      summary: Adds a comment to a post
+      description: ''
+      operationId: addComment
+      requestBody:
+        description: Adds a comment to a  user post
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment_Post'
+        required: true
+      responses:
+        '200':
+          description: Commented on post successfully
+        default:
+          description: Default error sample response
+      tags:
+        - Comment/Uncomment Posts
+      security:
+        - bearerAuth: []
+  /api/posts/uncomment:
+    put:
+      summary: ' Removes the comment from the comments array in the corresponding post'
+      description: ''
+      operationId: removeComment
+      requestBody:
+        description: Removes comment on user post
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnComment_Post'
+        required: true
+      responses:
+        '200':
+          description: UnComment on post successful
+        default:
+          description: Default error sample response
+      tags:
+        - Comment/Uncomment Posts
       security:
         - bearerAuth: []
   /auth/signin:
@@ -410,7 +688,62 @@ components:
         unfollowId:
           type: string
       xml:
-        name: UnfollowUser    
+        name: UnfollowUser
+    UserPost:
+      type: object
+      properties:
+        text:
+          type: string
+        photo:
+          type: string
+          format: binary
+      xml:
+        name: UserPost
+    Like_Unlike_Post:
+      type: object
+      properties:
+        postId:
+          type: string
+        userId:
+          type: string
+      xml:
+        name: Like_Unlike_Post
+    Comment_Post:
+      type: object
+      properties:
+        postId:
+          type: string
+        userId:
+          type: string
+        comment:
+          $ref: '#/components/schemas/CommentText'
+      xml:
+        name: Comment_Post
+    CommentText:
+      type: object
+      properties:
+        text:
+          type: string
+      xml:
+        name: CommentText
+    UnComment_Post:
+      type: object
+      properties:
+        postId:
+          type: string
+        userId:
+          type: string
+        comment:
+          $ref: '#/components/schemas/CommentId'
+      xml:
+        name: UnComment_Post
+    CommentId:
+      type: object
+      properties:
+        _id:
+          type: string
+      xml:
+        name: CommentId
   securitySchemes:
     bearerAuth:
       type: http

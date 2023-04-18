@@ -12,6 +12,7 @@ const YAML = require('yaml')
 
 import userRoutes from './routes/user.routes'
 import authRoutes from './routes/auth.routes'
+import postRoutes from './routes/post.routes'
 
 const app = express()
 
@@ -23,7 +24,8 @@ app.use(helmet())
 app.use(cors())
 
 app.use('/', userRoutes)
-app.use('/', authRoutes)
+app.use('/', authRoutes) 
+app.use('/', postRoutes)
 
 //swagger Configurations
 const file  = fs.readFileSync(path.join(CURRENT_WORKING_DIR, '/api/openapi.yaml'), 'utf8')

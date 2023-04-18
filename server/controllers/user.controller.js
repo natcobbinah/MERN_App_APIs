@@ -33,7 +33,6 @@ const create = async (req, res) => {
 }
 
 const userByID = async (req, res, next, id) => {
-    console.log("entered here")
     try {
         let user = await User.findById(id)
             .populate('following', '_id name')
@@ -192,7 +191,7 @@ const removeFollower = async (req, res) => {
             error: errorHandler.getErrorMessage(err)
         })
     }
-} 
+}
 
 const findPeople = async (req, res) => {
     let following = req.profile.following;
