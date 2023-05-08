@@ -1,6 +1,7 @@
 # User_Auth_Flow_NodeJS
-User Authentication and Authorization using NodeJS and documented with swaggerAPI
+A SocialMediaApp demo supporting User CRUD and auth functionality implementations (Sign up, User list, Authentication, Protected user profile, and Authorized user edit and delete), posts with image uploads, comments and like, user following and user followers support features
 
+> NodeJS, MongoDB Atlas, ExpressJS, SwaggerAPI, Mongoose
 ## App Breakdown
 > Backend Stack: NodeJS, MongoDB Atlas
 > 
