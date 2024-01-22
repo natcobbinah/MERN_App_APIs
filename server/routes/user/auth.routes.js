@@ -1,5 +1,5 @@
 const express = require('express')
-import authCtrl  from '../controllers/auth.controller'
+import authCtrl from '../../controllers/user/auth.controller';
 
 const router = express.Router()
 

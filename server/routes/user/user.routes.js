@@ -1,13 +1,13 @@
 const express = require('express')
-import userCtrl from '../controllers/user.controller'
-import authCtrl from '../controllers/auth.controller'
+import userCtrl from '../../controllers/user/user.controller'
+import authCtrl from '../../controllers/user/auth.controller'
 
 const router = express.Router()
 
 router.route('/api/users')
       .get(userCtrl.list)
       .post(userCtrl.create);
-
+      
 router.route('/api/users/defaultPhoto')
       .get(userCtrl.defaultPhoto);
 

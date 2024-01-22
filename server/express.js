@@ -10,9 +10,11 @@ const swaggerUi = require('swagger-ui-express');
 const fs = require("fs")
 const YAML = require('yaml')
 
-import userRoutes from './routes/user.routes'
-import authRoutes from './routes/auth.routes'
-import postRoutes from './routes/post.routes'
+import userRoutes from './routes/user/user.routes'
+import authRoutes from './routes/user/auth.routes'
+import postRoutes from './routes/user/post.routes'
+import courseRoutes from './routes/classroom/course.routes'
+import enrollmentRoutes from './routes/classroom/enrollment.routes'
 
 const app = express()
 
@@ -24,11 +26,13 @@ app.use(helmet())
 app.use(cors())
 
 app.use('/', userRoutes)
-app.use('/', authRoutes) 
+app.use('/', authRoutes)
 app.use('/', postRoutes)
+app.use('/', courseRoutes)
+app.use('/', enrollmentRoutes)
 
 //swagger Configurations
-const file  = fs.readFileSync(path.join(CURRENT_WORKING_DIR, '/api/openapi.yaml'), 'utf8')
+const file = fs.readFileSync(path.join(CURRENT_WORKING_DIR, '/api/openapi.yaml'), 'utf8')
 const swaggerDocument = YAML.parse(file)
 const options = {
     explorer: true

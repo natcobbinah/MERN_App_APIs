@@ -1,5 +1,5 @@
-import User from '../models/user.model';
-import errorHandler from '../helpers/dbErrorHandler';
+import User from '../../models/user/user.model';
+import errorHandler from '../../helpers/dbErrorHandler';
 const { IncomingForm } = require('formidable');
 const fs = require("fs")
 const CURRENT_WORKING_DIR = process.cwd()
@@ -75,6 +75,7 @@ const update = async (req, res) => {
         let user = req.profile;
         user = Object.assign(user, req.body) //copy req.body contents to user in-order to be updated
         user.updated = Date.now()
+        user.educator = fields.educator
 
         if (files.photo) {
             user.photo.data = fs.readFileSync(files.photo.filepath)
@@ -212,8 +213,20 @@ const findPeople = async (req, res) => {
     }
 }
 
+//--------------classroom extensioon functionalities----------------------//
+const isEducator = (req, res, next) => {
+    const isEducator = req.profile && req.profile.educator;
+    if (!isEducator) {
+        return res.status(403).json({
+            error: "User is not an educator"
+        })
+    }
+    next();
+}
+
 export default {
     list, create, read, update, remove, userByID,
     photo, defaultPhoto, addFollowing, addFollower,
-    removeFollowing, removeFollower, findPeople
+    removeFollowing, removeFollower, findPeople,
+    isEducator
 }

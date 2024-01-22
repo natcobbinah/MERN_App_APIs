@@ -1,8 +1,8 @@
 openapi: 3.0.1
 info:
-  title: Social Media App  API
+  title: MERN   API
   version: 1.0.0
-  description: API endpoints to communicate with user data
+  description: API endpoints [social media app, classroom app]
   contact:
     email: fmg3ckali@gmail.com
     name: Nathaniel Cobbinah
@@ -136,6 +136,7 @@ paths:
                      "name":"John Smith",
                      "email":"john@smith.info",
                      "updated": "24232423242",
+                     "educator": false
                     }
           description: Updates a loggedIn user record
         default:
@@ -581,6 +582,492 @@ paths:
         - Comment/Uncomment Posts
       security:
         - bearerAuth: []
+        
+  /api/courses/by/{userId}:
+    post:
+      summary: 'verify user is an educator before creating course'
+      description: >-
+        verifies that the current user is an educator, and then creates a new course with the course data 
+      operationId: createCourse
+      parameters:
+        - name: userId
+          in: path
+          description: The userId of the user.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        description: A new course object
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Classroom'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                User who is an educator created course saved Successfully:
+                  value: |-
+                    { 
+                     "name":"John Smith",
+                     "description":"john@smith.info",
+                     "image": "wwwwwwwwwwwwwwwww"
+                     "category": "xxxxxsewsdsds",
+                     "published": "sssssssse",
+                     "instructor": "ssssssssss",
+                     "updated":"ssssssssssss",
+                     "created":"sssssssssssssss",
+                     "lessons":[
+                        {
+                          "title":"wwwwwwwwww",
+                          "content":"eeeeeeee",
+                          "resource_url":"eeeeeeeeeeeeee"
+                        }
+                     ]
+                    }
+          description: Creates a new post record by user
+        default:
+          description: Default error sample response
+      tags:
+        - Course
+      security:
+        - bearerAuth: []
+    
+    get:
+      summary: 'returns the list of courses by a given instructor'
+      description: ''
+      operationId: listByInstructor
+      parameters:
+        - name: userId
+          in: path
+          description: The userId of the user.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                list of courses by a given instructor retrieved successfully:
+                  value: |-
+                    [
+                       { 
+                       "name":"John Smith",
+                       "description":"john@smith.info",
+                       "image": "wwwwwwwwwwwwwwwww"
+                       "category": "xxxxxsewsdsds",
+                       "published": "sssssssse",
+                       "instructor": "ssssssssss",
+                       "updated":"ssssssssssss",
+                       "created":"sssssssssssssss",
+                       "lessons":[
+                          {
+                            "title":"wwwwwwwwww",
+                            "content":"eeeeeeee",
+                            "resource_url":"eeeeeeeeeeeeee"
+                          }
+                       ]
+                      }
+                    ]
+          description: Retrieved list of courses by user who is an educator
+        default:
+          description: Default error sample response
+      tags:
+        - Course
+      security:
+        - bearerAuth: []
+    
+  /api/courses/photo/{courseId}:
+    get:
+      summary: Returns the photo associated with a specific course
+      description: ''
+      operationId: courseImage
+      parameters:
+        - name: courseId
+          in: path
+          description: Image associated with a course.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Image file for course
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        default:
+          description: Default error sample response
+      tags:
+        - Course
+        
+  /api/courses/{courseId}:
+    get:
+      summary: Returns individual course specific details
+      description: ''
+      operationId: readCourseInfo
+      parameters:
+        - name: courseId
+          in: path
+          description: Returns individual course specific details.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Default sample response
+          content:
+            application/json:
+              examples:
+                User who is an educator created course saved Successfully:
+                  value: |-
+                    { 
+                     "name":"John Smith",
+                     "description":"john@smith.info",
+                     "image": "wwwwwwwwwwwwwwwww"
+                     "category": "xxxxxsewsdsds",
+                     "published": "sssssssse",
+                     "instructor": "ssssssssss",
+                     "updated":"ssssssssssss",
+                     "created":"sssssssssssssss",
+                     "lessons":[
+                        {
+                          "title":"wwwwwwwwww",
+                          "content":"eeeeeeee",
+                          "resource_url":"eeeeeeeeeeeeee"
+                        }
+                     ]
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - Course   
+        
+    put:
+      summary: ' allows an existing course to be updated if the user who is making the request is the authorized instructor of the given course'
+      description: ''
+      operationId: updateCourseInfo
+      parameters:
+        - name: courseId
+          in: path
+          description: The courseId for a given course.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        description: required data for updating a given course
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseWithLessonsUpdate'
+        required: true
+      
+      responses:
+        '200':
+          description: course content updated successfully
+        default:
+          description: Default error sample response
+      tags:
+        - Course
+      security:
+        - bearerAuth: []
+        
+    delete:
+      summary: takes a request to delete a specified course from the database
+      description: >-
+        This DELETE route takes the course ID as a URL parameter and checks if the current user is signed in and authorized to perform this delete, before proceeding to delete the course from the database
+      operationId: removeCourse
+      parameters:
+        - name: courseId
+          in: path
+          description: The courseId of a course.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Course Record deleted successfully:
+                  value: |-
+                    [
+                       { 
+                       "name":"John Smith",
+                       "description":"john@smith.info",
+                       "image": "wwwwwwwwwwwwwwwww"
+                       "category": "xxxxxsewsdsds",
+                       "published": "sssssssse",
+                       "instructor": "ssssssssss",
+                       "updated":"ssssssssssss",
+                       "created":"sssssssssssssss",
+                       "lessons":[
+                          {
+                            "title":"wwwwwwwwww",
+                            "content":"eeeeeeee",
+                            "resource_url":"eeeeeeeeeeeeee"
+                          }
+                       ]
+                      }
+                    ]
+          description: Removes a course from the database
+        default:
+          description: Default error sample response
+      tags:
+        - Course
+      security:
+        - bearerAuth: []
+  
+  /api/courses/published:
+    get:
+      summary: retrieve the list of published courses from the database
+      description: ''
+      operationId: listPublished
+      responses:
+        '200':
+          description: Default sample response
+          content:
+            application/json:
+              examples:
+                retrieved the list of published courses from the database successfully:
+                  value: |-
+                    [
+                      { 
+                       "name":"John Smith",
+                       "description":"john@smith.info",
+                       "image": "wwwwwwwwwwwwwwwww"
+                       "category": "xxxxxsewsdsds",
+                       "published": "sssssssse",
+                       "instructor": "ssssssssss",
+                       "updated":"ssssssssssss",
+                       "created":"sssssssssssssss",
+                       "lessons":[
+                          {
+                            "title":"wwwwwwwwww",
+                            "content":"eeeeeeee",
+                            "resource_url":"eeeeeeeeeeeeee"
+                          }
+                       ]
+                      }
+                    ]
+        default:
+          description: Default error sample response
+      tags:
+        - Course 
+  
+  /api/courses/{courseId}/lesson/new:
+    put:
+      summary: ' while it is still unpublished, the instructor will be able to add a lesson to a course'
+      description: ''
+      operationId: newLesson
+      parameters:
+        - name: courseId
+          in: path
+          description: The courseId for a given course.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        description: required lesson info data for updating a given course
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+        required: true
+      responses:
+        '200':
+          description: course content updated successfully
+        default:
+          description: Default error sample response
+      tags:
+        - Course
+      security:
+        - bearerAuth: []
+        
+  /api/enrollment/enrolled:
+    get:
+      summary:  returns list of enrollments for a specific student using their id when they login successfully
+      description: ''
+      operationId: listEnrolled
+      responses:
+        '200':
+          description: Default sample response
+          content:
+            application/json:
+              examples:
+                 returns list of enrollments for a specific student using their id when they login successfully:
+                  value: |-
+                    [
+                      {
+                        "course":{
+                          "id": "xxxxx",
+                          "name":"yyyyyy",
+                          "category":"pppppp",
+                        },
+                        "student": "idxxxwey",
+                        "lessonStatus":[
+                          {
+                            "lesson":{
+                              "title":"zzzz",
+                              "content":"mmmm",
+                              "resource_url":"url..."
+                            }
+                          },
+                          complete: false
+                        ],
+                        "enrolled": Date(),
+                        "updated": Date(),
+                        "completed": Date()
+                      }
+                    ]
+        default:
+          description: Default error sample response
+      tags:
+        - Enrollment 
+      security:
+        - bearerAuth: []
+  
+  /api/enrollment/stats/{courseId}:
+    get:
+      summary: Queries the Enrollments collection in the database to calculate the stats for a specific course
+      description: ''
+      operationId: enrollmentStats
+      parameters:
+        - name: courseId
+          in: path
+          description: Queries the Enrollments collection in the database to calculate the stats for a specific course
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Default sample response
+          content:
+            application/json:
+              examples:
+                return a stats object containing the total enrollments and total completions for the course, as identified by the courseId :
+                  value: |-
+                    "stats": { 
+                      "totalEnrolled":7777,
+                      "totalCompleted": 99878,
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - Enrollment   
+  
+  /api/enrollment/new/{courseId}:
+    get:
+      summary: Creates a new enrollment for a user, when they choose to enroll in a course
+      description: ''
+      operationId: createEnrollment
+      parameters:
+        - name: courseId
+          in: path
+          description: Used to retrieve the corresponding course from the database
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Default sample response
+          content:
+            application/json:
+              examples:
+                returns an enrollment object with course, user and lessons  :
+                  value: |-
+                    { 
+                      "course":{
+                      },
+                      "student": "ObjectId(i768778687)",
+                      "lessonStatus":[
+                         "lesson":{
+                           "title": "ououoiu",
+                           "content": "sljdsdflsjd",
+                           "resource_url":"url()"
+                         },
+                         "complete":boolean
+                      ],
+                      "enrolled":Date(),
+                      "updated":Date(),
+                      "completed":Date()
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - Enrollment 
+      security:
+        - bearerAuth: []
+        
+  /api/enrollment/{enrollmentId}:
+    get:
+      summary:  Returns the enrollment details for a given user who is enrolled to a course
+      description: ''
+      operationId: readEnrollments
+      parameters:
+        - name: enrollmentId
+          in: path
+          description: The enrollmentID is used to query the Enrollments collection by the provided ID, and if a matching enrollment document is found, we ensure that the referenced course, the nested course instructor, and the referenced student details are also populated and returned from the database. 
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Default sample response
+          content:
+            application/json:
+              examples:
+                returns an course enrolled by a user:
+                  value: |-
+                    { 
+                      "course":{
+                      },
+                      "student": "ObjectId(i768778687)",
+                      "lessonStatus":[
+                         "lesson":{
+                           "title": "ououoiu",
+                           "content": "sljdsdflsjd",
+                           "resource_url":"url()"
+                         },
+                         "complete":boolean
+                      ],
+                      "enrolled":Date(),
+                      "updated":Date(),
+                      "completed":Date()
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - Enrollment
+      security:
+        - bearerAuth: []
+
+  
+  
   /auth/signin:
     summary: Login to userAccount
     description: A registered User can login using this endpoint
@@ -669,6 +1156,8 @@ components:
         photo:
           type: string
           format: binary
+        educator:
+          type: boolean
       xml:
         name: UserUpdate
     FollowUser:
@@ -744,6 +1233,44 @@ components:
           type: string
       xml:
         name: CommentId
+    Classroom:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        image:
+          type: string
+          format: binary
+    CourseWithLessonsUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        published:
+          type: boolean
+        image:
+          type: string
+          format: binary
+        lessons:
+          $ref: '#/components/schemas/Lesson'
+    Lesson:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        resource_url:
+          type: string
+    
   securitySchemes:
     bearerAuth:
       type: http

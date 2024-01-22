@@ -1,5 +1,5 @@
-import Post from '../models/post.model';
-import errorHandler from '../helpers/dbErrorHandler';
+import Post from '../../models/user/post.model';
+import errorHandler from '../../helpers/dbErrorHandler';
 const { IncomingForm } = require('formidable');
 const fs = require("fs")
 

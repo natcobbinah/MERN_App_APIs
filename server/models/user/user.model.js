@@ -55,7 +55,11 @@ const UserSchema = new Schema({
             type: mongoose.ObjectId,
             ref: 'Users'
         }
-    ]
+    ],
+    educator: {
+        type: Boolean,
+        default: false
+    }
 })
 
 UserSchema.virtual('password')

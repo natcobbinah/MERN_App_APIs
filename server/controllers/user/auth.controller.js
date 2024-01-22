@@ -1,7 +1,7 @@
-import User from '../models/user.model';
+import User from '../../models/user/user.model'
 const jwt  = require('jsonwebtoken')
 var { expressjwt } = require("express-jwt");
-import config from '../../config/config';
+import config from '../../../config/config';
 
 const signin = async (req, res) => {
     try {
@@ -26,7 +26,8 @@ const signin = async (req, res) => {
             user: {
                 _id: user._id,
                 name: user.name,
-                email: user.email
+                email: user.email,
+                educator: user.educator
             }
         })
     } catch (err) {

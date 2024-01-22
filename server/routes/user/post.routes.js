@@ -1,7 +1,7 @@
 const express = require('express')
-import authCtrl from '../controllers/auth.controller'
-import userCtrl from '../controllers/user.controller'
-import postCtrl from '../controllers/post.controller'
+import authCtrl from '../../controllers/user/auth.controller'
+import userCtrl from '../../controllers/user/user.controller'
+import postCtrl from '../../controllers/user/post.controller'
 
 const router = express.Router()
 
