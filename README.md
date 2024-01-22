@@ -3,6 +3,7 @@
     1. Social Media App (users, followers, posts and comments)
     2. ClassRoom App (users, courses, lessons and enrollments) 
 
+> NodeJS, MongoDB Atlas, ExpressJS, SwaggerAPI, Mongoose
 ## App Breakdown
 > Backend Stack: NodeJS, MongoDB Atlas
 > 
